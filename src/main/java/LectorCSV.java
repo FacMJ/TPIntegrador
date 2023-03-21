@@ -8,6 +8,18 @@ import java.util.HashMap;
 import java.util.List;
 
 
+/* 
+ 
+DESCRIPCION:
+    - Hay 3 clases: LectorCSV (abstracta), LectorResultadosCSV y LectorPronosticosCSV. Las dos ultimas heredan de la primera.
+    - Para leer el archivo resultados.csv hay que usar LectorResultadosCSV y para leer el archivo pronosticos.csv hay que usar LectorPronosticosCSV.
+    - El parametro de entrada de los constructores es la ubicacion del archivo correspondiente (String).
+    - Tienen un metodo llamado getData que necesita 2 entradas:
+        1) numeroPartido (int): El numero del partido en donde esta la informacion que se necesita. Por ejemplo: si es el primer partido, entonces numeroPartido=1
+        2) nombreColumna (String): El nombre de la columna en donde esta la informacion que se necesita. Para la clase LectorResultadosCSV, las entradas pueden ser: equipo1, goles1, goles2 o equipo2. Para la clase LectorPronosticosCSV, las entradas pueden ser: equipo1, gana1, empate, gana2 o equipo2.
+
+*/
+
 public abstract class LectorCSV {
     
     protected ArrayList<HashMap<String,String>> listaPartidos;
