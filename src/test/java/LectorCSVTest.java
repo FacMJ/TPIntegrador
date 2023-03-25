@@ -1,11 +1,7 @@
-import org.junit.BeforeClass;
+
 import org.junit.Test;
 import static org.junit.Assert.assertEquals;
 
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.nio.file.Path;
-import org.junit.Assert;
 
 public class LectorCSVTest {
 

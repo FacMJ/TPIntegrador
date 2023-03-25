@@ -1,9 +1,9 @@
 
 public class Partido {
-    Equipo Equipo1;
-    Equipo Equipo2;
-    int GolesEquipo1;
-    int GolesEquipo2;
+    private final Equipo Equipo1;
+    private final Equipo Equipo2;
+    private final int GolesEquipo1;
+    private final int GolesEquipo2;
     public Partido (Equipo E1, Equipo E2, int GolesEquipo1, int GolesEquipo2){
         Equipo1 = E1;
         Equipo2 = E2;
@@ -11,14 +11,14 @@ public class Partido {
         this.GolesEquipo2 = GolesEquipo2;
 
     }
-    public Equipo getEquipo () {
-        if (GolesEquipo1 < GolesEquipo2)
+    public Equipo getEquipoGanador() {
+        if (GolesEquipo1 < GolesEquipo2) {
             return Equipo2;
-        else if (GolesEquipo1 > GolesEquipo2) {
+        }else if (GolesEquipo1 > GolesEquipo2) {
             return Equipo1;
-        } else {
+        }else{
             return null;
-
         }
     }
-    }
+
+}
