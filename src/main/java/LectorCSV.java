@@ -18,57 +18,87 @@ DESCRIPCION:
 */
 
 public abstract class LectorCSV {
-    
-    protected ArrayList<HashMap<String,String>> listaPartidos;
-    protected List<String> lineas;
 
-    public LectorCSV(String uri){
+	protected ArrayList<HashMap<String, String>> listaPartidos;
+	protected List<String> lineas;
 
-        try {
-            lineas = Files.readAllLines(Path.of(uri));
-            listaPartidos = new ArrayList<>();
-            
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+	public LectorCSV(String uri) {
 
-    }
+		try {
+			lineas = Files.readAllLines(Path.of(uri));
+			listaPartidos = new ArrayList<>();
 
-    public String getData(int numeroPartido, String nombreColumna){
-        return listaPartidos.get(numeroPartido).get(nombreColumna);
-    }
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
+
+	}
+
+	public String getData(int numeroPartido, String nombreColumna) {
+		return listaPartidos.get(numeroPartido).get(nombreColumna);
+	}
 
 }
 
-class LectorResultadosCSV extends LectorCSV{
+class LectorResultadosCSV extends LectorCSV {
 
-    public LectorResultadosCSV(String uri) {
-        super(uri);
-        for (String linea: lineas){
-            String[] arrayLinea = linea.split("\t");
-            HashMap<String,String> map = new HashMap<>();
-            map.put("equipo1", arrayLinea[0]);
-            map.put("goles1", arrayLinea[1]);
-            map.put("goles2", arrayLinea[2]);
-            map.put("equipo2", arrayLinea[3]);
-            listaPartidos.add(map);
-        }
-    }
+	public LectorResultadosCSV(String uri) {
+		super(uri);
+		for (String linea : lineas) {
+			String[] arrayLinea = linea.split("\t");
+			HashMap<String, String> map = new HashMap<>();
+			map.put("equipo1", arrayLinea[0]);
+			map.put("goles1", arrayLinea[1]);
+			map.put("goles2", arrayLinea[2]);
+			map.put("equipo2", arrayLinea[3]);
+			listaPartidos.add(map);
+		}
+	}
 }
 
-class LectorPronosticosCSV extends LectorCSV{
+class LectorPronosticosCSV extends LectorCSV {
 
-    public LectorPronosticosCSV(String uri) {
-        super(uri);
-        for (String linea: lineas) {
-            String[] arrayLinea = linea.split("\t");
-            HashMap<String, String> map = new HashMap<>();
-            map.put("equipo1", arrayLinea[0]);
-            map.put("gana1", arrayLinea[1]);
-            map.put("empate", arrayLinea[2]);
-            map.put("gana2", arrayLinea[3]);
-            map.put("equipo2", arrayLinea[4]);
-            listaPartidos.add(map);
-        }
-    }
+	public LectorPronosticosCSV(String uri) {
+		super(uri);
+		for (String linea : lineas) {
+			String[] arrayLinea = linea.split("\t");
+			HashMap<String, String> map = new HashMap<>();
+			map.put("equipo1", arrayLinea[0]);
+			map.put("gana1", arrayLinea[1]);
+			map.put("empate", arrayLinea[2]);
+			map.put("gana2", arrayLinea[3]);
+			map.put("equipo2", arrayLinea[4]);
+			listaPartidos.add(map);
+		}
+	
+	}
+	
+	
+	public Resultado GanaEquipoUno(int lineaLectura) {
+		LectorPronosticosCSV apuesta = new LectorPronosticosCSV("src/main/resources/pronosticos.csv");
+
+		if(apuesta.getData(lineaLectura,"gana1").equals("x")) {
+			return Resultado.GANADOR;
+		}else if(apuesta.getData(lineaLectura,"empate").equals("x")) {
+			return Resultado.EMPATE;
+		}else if(apuesta.getData(lineaLectura,"gana2").equals("x")) {
+			return Resultado.PERDEDOR;
+		}
+		return null;
+	}
+	
+	
+	public String Apuesta(int lineaLectura) {
+		LectorPronosticosCSV apuesta = new LectorPronosticosCSV("src/main/resources/pronosticos.csv");
+
+		if(apuesta.getData(lineaLectura,"gana1").equals("x")) {
+			return "gana1";
+		}else if(apuesta.getData(lineaLectura,"empate").equals("x")) {
+			return "empate";
+		}else if(apuesta.getData(lineaLectura,"gana2").equals("x")) {
+			return "gana2";
+		}
+		return null;
+	}
+	
 }
