@@ -1,13 +1,14 @@
 public class Pronostico {
-	private int puntos;
-    private Equipo equipo;
-    private Partido partido;
-    private Resultado resultadoEsperado;
+	private final int puntos;
+    private final Partido partido;
 
     public Pronostico(Partido partido, Equipo equipo, Resultado resultadoEsperado){
-        this.equipo = equipo;
         this.partido = partido;
-        this.resultadoEsperado = resultadoEsperado;
+        if(resultadoEsperado.equals(getResultado(equipo))){
+            puntos=1;
+        }else{
+            puntos=0;
+        }
     }
 
     private Resultado getResultado(Equipo equipo){
@@ -25,24 +26,7 @@ public class Pronostico {
     }
     
     public int puntos(){
-        if(resultadoEsperado.equals(getResultado(equipo))){
-            this.puntos++;
-        }
-        return this.puntos;
+        return puntos;
     }
-
-	public void setEquipo(Equipo equipo) {
-		this.equipo = equipo;
-	}
-
-	public void setPartido(Partido partido) {
-		this.partido = partido;
-	}
-
-	public void setResultadoEsperado(Resultado resultadoEsperado) {
-		this.resultadoEsperado = resultadoEsperado;
-	}
-    
-    
 
 }
