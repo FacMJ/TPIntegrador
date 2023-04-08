@@ -45,12 +45,13 @@ class LectorResultadosCSV extends LectorCSV {
 	public LectorResultadosCSV(String uri) {
 		super(uri);
 		for (String linea : lineas) {
-			String[] arrayLinea = linea.split("\t");
+			String[] arrayLinea = linea.split(";");
 			HashMap<String, String> map = new HashMap<>();
-			map.put("equipo1", arrayLinea[0]);
-			map.put("goles1", arrayLinea[1]);
-			map.put("goles2", arrayLinea[2]);
-			map.put("equipo2", arrayLinea[3]);
+			map.put("ronda", arrayLinea[0]);
+			map.put("equipo1", arrayLinea[1]);
+			map.put("goles1", arrayLinea[2]);
+			map.put("goles2", arrayLinea[3]);
+			map.put("equipo2", arrayLinea[4]);
 			listaPartidos.add(map);
 		}
 	}
@@ -61,42 +62,27 @@ class LectorPronosticosCSV extends LectorCSV {
 	public LectorPronosticosCSV(String uri) {
 		super(uri);
 		for (String linea : lineas) {
-			String[] arrayLinea = linea.split("\t");
+			String[] arrayLinea = linea.split(";");
 			HashMap<String, String> map = new HashMap<>();
-			map.put("equipo1", arrayLinea[0]);
-			map.put("gana1", arrayLinea[1]);
-			map.put("empate", arrayLinea[2]);
-			map.put("gana2", arrayLinea[3]);
-			map.put("equipo2", arrayLinea[4]);
+			map.put("persona", arrayLinea[0]);
+			map.put("equipo1", arrayLinea[1]);
+			map.put("gana1", arrayLinea[2]);
+			map.put("empate", arrayLinea[3]);
+			map.put("gana2", arrayLinea[4]);
+			map.put("equipo2", arrayLinea[5]);
 			listaPartidos.add(map);
 		}
 	
 	}
 	
 	
-	public Resultado GanaEquipoUno(int lineaLectura) {
-		LectorPronosticosCSV apuesta = new LectorPronosticosCSV("src/main/resources/pronosticos.csv");
-
-		if(apuesta.getData(lineaLectura,"gana1").equals("x")) {
+	public Resultado pronosticoEquipo1(int lineaLectura) {
+		if(getData(lineaLectura,"gana1").equals("x")) {
 			return Resultado.GANADOR;
-		}else if(apuesta.getData(lineaLectura,"empate").equals("x")) {
+		}else if(getData(lineaLectura,"empate").equals("x")) {
 			return Resultado.EMPATE;
-		}else if(apuesta.getData(lineaLectura,"gana2").equals("x")) {
+		}else if(getData(lineaLectura,"gana2").equals("x")) {
 			return Resultado.PERDEDOR;
-		}
-		return null;
-	}
-	
-	
-	public String Apuesta(int lineaLectura) {
-		LectorPronosticosCSV apuesta = new LectorPronosticosCSV("src/main/resources/pronosticos.csv");
-
-		if(apuesta.getData(lineaLectura,"gana1").equals("x")) {
-			return "gana1";
-		}else if(apuesta.getData(lineaLectura,"empate").equals("x")) {
-			return "empate";
-		}else if(apuesta.getData(lineaLectura,"gana2").equals("x")) {
-			return "gana2";
 		}
 		return null;
 	}
