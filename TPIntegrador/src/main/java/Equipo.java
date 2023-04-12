@@ -1,0 +1,23 @@
+public class Equipo {
+    private  String nombre, descripcion;
+
+    public Equipo(String nombre) {
+		this.nombre = nombre;
+	}
+
+	public String getNombre() {
+		return nombre;
+	}
+
+	public String getDescripcion(){
+        return descripcion;
+    }
+
+	public void setDescripcion(String descripcion) {
+		this.descripcion = descripcion;
+	}
+
+    
+	
+	
+}
