@@ -1,3 +1,7 @@
-Equipo 1	Cant. Goles 1	Cant. Goles 2	Equipo 2
-Argentina	1	2	Arabia Saudita
-Polonia	0	0	Mexico
+Ronda;Equipo1;Goles1;Goles2;Equipo2
+1;Argentina;1;2;Arabia Saudita
+1;Polonia;0;0;Mexico
+2;Polonia;2;0;Arabia Saudita
+2;Argentina;2;0;Mexico
+3;Polonia;0;2;Argentina
+3;Arabia Saudita;1;2;Mexico
