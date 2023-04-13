@@ -1,11 +1,17 @@
 public class Ronda {
-    private int Número;
-    private Partido[] partidos;
+    private final int numero;
+    private final Partido[] partidos;
+    public Ronda(int numero, Partido[] partidos){
+        this.partidos = partidos;
+        this.numero = numero;
+    }
 
-    {
-        public Ronda( int Número, Partido[] partidos){
-            this.Número = Número;
-            this.partidos = partidos;
+    public Partido[] getPartidos(){
+        return partidos;
     }
+
+    public int getNumero(){
+        return numero;
     }
+
 }

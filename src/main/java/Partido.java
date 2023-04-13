@@ -21,4 +21,8 @@ public class Partido {
         }
     }
 
+    public Equipo[] getEquipos(){
+        return new Equipo[]{Equipo1, Equipo2};
+    }
+
 }

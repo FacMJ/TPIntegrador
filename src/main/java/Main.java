@@ -1,86 +1,80 @@
-
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.List;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 public class Main {
-	public static void main(String[] args) {
-		List<PartidoJugado> listaResultadoPartidos = new ArrayList<PartidoJugado>();
+    public static void main(String[] args){
 
-		try {
-			for (int i = 1; i < Utilidades.contadorFilas("src/main/resources/resultados.csv"); i++) {
+		LectorResultadosCSV lectorR = new LectorResultadosCSV("src/main/resources/resultados.csv");
+		LectorPronosticosCSV lectorP = new LectorPronosticosCSV("src/main/resources/pronosticos.csv");
 
-				PartidoJugado partido = new PartidoJugado(i);
-				if (partido.isEstadoPartido()) {
-					listaResultadoPartidos.add(new PartidoJugado(i));
-				}
+		Set<Equipo> equipos = new HashSet<>();
+		equipos.add(new Equipo("Argentina", "Celeste y blanco"));
+		equipos.add(new Equipo("Arabia Saudita", "Verde"));
+		equipos.add(new Equipo("Polonia", "Rojo y blanco"));
+		equipos.add(new Equipo("Mexico", "Verde, blanco y rojo"));
 
+		ArrayList<Ronda> rondas = new ArrayList<Ronda>();
+		ArrayList<Partido> partidos = new ArrayList<>();
+
+		int cantidadRondas = Integer.parseInt(lectorR.getData(lectorR.getSize()-1, "ronda"));
+		int cantPartidosPorRonda = 2;
+
+		for(int i=0; i<cantidadRondas; i++){
+			Partido[] partidosRonda = new Partido[cantPartidosPorRonda];
+			for(int j=0; j<cantPartidosPorRonda; j++){
+				int indice = (j+1)+cantPartidosPorRonda*i;
+				Equipo equipo1 = lectorR.getEquipos(indice, equipos)[0],
+						equipo2 = lectorR.getEquipos(indice, equipos)[1];
+				int goles1 = Integer.parseInt(lectorR.getData(indice, "goles1")),
+						goles2 = Integer.parseInt(lectorR.getData(indice, "goles2"));
+
+				Partido partido_i = new Partido(equipo1, equipo2, goles1, goles2);
+				partidosRonda[j] = partido_i;
+				partidos.add(partido_i);
 			}
-		} catch (IOException e) {
-			e.printStackTrace();
+			rondas.add(new Ronda(i+1, partidosRonda));
 		}
 
-		PartidoJugado primerPartido = listaResultadoPartidos.get(0);
-		System.out.println(primerPartido.getGanador());
+		HashSet<Persona> personas = new HashSet<>();
 
-		
-		
-		
-		
-		
-		
-		/*
-		 * LectorResultadosCSV resultados = new
-		 * LectorResultadosCSV("src/main/resources/resultados.csv");
-		 * LectorPronosticosCSV pronosticos = new
-		 * LectorPronosticosCSV("src/main/resources/pronosticos.csv");
-		 * 
-		 * String equipoUnoPartidoUno = resultados.getData(1, "equipo1"); Equipo
-		 * Argentina = new Equipo(equipoUnoPartidoUno); String input =
-		 * resultados.getData(1, "ronda"); int golesUnoPartidoUno =
-		 * Integer.parseInt(input); System.out.println(golesUnoPartidoUno);
-		 * 
-		 * String equipoDosPartidoUno = resultados.getData(1, "equipo2"); Equipo
-		 * ArabiaSaudi = new Equipo(equipoDosPartidoUno); input = resultados.getData(1,
-		 * "goles2"); int golesDosPartidoUno = Integer.parseInt(input);
-		 * 
-		 * 
-		 * Partido primerPartido = new Partido(Argentina, ArabiaSaudi,
-		 * golesUnoPartidoUno , golesDosPartidoUno);
-		 * 
-		 * 
-		 * String equipoUnoPartidoDos = resultados.getData(2, "equipo1"); Equipo Polonia
-		 * = new Equipo(equipoUnoPartidoDos); input = resultados.getData(2, "goles1");
-		 * int golesUnoPartidoDos = Integer.parseInt(input);
-		 * 
-		 * String equipoDosPartidoDos = resultados.getData(2, "equipo2"); Equipo Mexico
-		 * = new Equipo(equipoDosPartidoDos); input = resultados.getData(2, "goles2");
-		 * int golesDosPartidoDos = Integer.parseInt(input);
-		 * 
-		 * Partido segundoPartido = new Partido(Polonia, Mexico, golesUnoPartidoDos ,
-		 * golesDosPartidoDos);
-		 * 
-		 * 
-		 * Pronostico pronostico = new
-		 * Pronostico(primerPartido,Argentina,pronosticos.GanaEquipoUno(1)); try {
-		 * System.out.println("Equipo que gano el primer partido: " +
-		 * primerPartido.getEquipoGanador().getNombre());
-		 * 
-		 * }catch (NullPointerException e){ System.out.println("Hubo empate"); }
-		 * System.out.println("Puntos despues de la primer apuesta: " +
-		 * pronostico.puntos());
-		 * 
-		 * 
-		 * pronostico.setPartido(segundoPartido); pronostico.setEquipo(Polonia);
-		 * pronostico.setResultadoEsperado(pronosticos.GanaEquipoUno(2));
-		 * 
-		 * try { System.out.println("Equipo que gano el segundo partido: " +
-		 * segundoPartido.getEquipoGanador().getNombre()); }catch (NullPointerException
-		 * e){ System.out.println("Hubo empate"); }
-		 * System.out.println("Puntos despues del segundo partido: " +
-		 * pronostico.puntos());
-		 * 
-		 */
-	}
+		for(int i=1; i<lectorP.getSize(); i++){
+			String nombre = lectorP.getData(i, "persona");
+			if(personas.stream().noneMatch(p -> p.getNombre().equals(nombre))){
+				Persona nuevaPersona = new Persona(nombre);
+				personas.add(nuevaPersona);
+			}
 
+			Resultado resultadoEsperado_i = lectorP.pronosticoEquipo1(i);
+			String n1 = lectorP.getData(i, "equipo1"),
+					n2 = lectorP.getData(i, "equipo2");
+			Equipo equipo1 = equipos.stream().filter(e -> e.getNombre().equals(n1)).findAny().get(),
+					equipo2 = equipos.stream().filter(e -> e.getNombre().equals(n2)).findAny().get();
+			Partido partido = partidos.stream().filter(p -> Arrays.equals(p.getEquipos(), new Equipo[]{equipo1, equipo2})).findAny().get();
+
+			Persona persona = personas.stream().filter(p -> p.getNombre().equals(nombre)).findAny().get();
+			persona.addPronostico(new Pronostico(partido, equipo1, resultadoEsperado_i));
+
+		}
+
+		System.out.println("Nombre ----- Pronosticos acertados ----- Puntos");
+
+		for(Persona p: personas){
+			System.out.println(p.getNombre() + " ------ " + p.pronosticosAcertados() + "/" + p.getPronosticos().size()+ " ------ " + p.puntos());
+		}
+
+		System.out.println("\n-----------------------------------\n");
+
+		for(Ronda r: rondas){
+			System.out.println("Ronda " + r.getNumero() + ":");
+			int contador=1;
+			for(Partido p: r.getPartidos()){
+				Equipo[] eqps = p.getEquipos();
+				System.out.println("\t\t Partido " + contador + " ---> " + eqps[0].getNombre() + " vs " + eqps[1].getNombre() );
+				contador++;
+			}
+		}
+
+    }
 }
