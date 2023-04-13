@@ -4,6 +4,7 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Set;
 
 /* 
  
@@ -35,7 +36,27 @@ public abstract class LectorCSV {
 	}
 
 	public String getData(int numeroPartido, String nombreColumna) {
+		if(numeroPartido<1){
+			throw new IndexOutOfBoundsException("El primer argumento debe ser mayor o igual a 1");
+		}
 		return listaPartidos.get(numeroPartido).get(nombreColumna);
+	}
+
+	public int getSize(){
+		return listaPartidos.size();
+	}
+
+	public Equipo[] getEquipos(int numeroLinea, Set<Equipo> equipos){
+		String nombre1 = getData(numeroLinea, "equipo1"),
+				nombre2 = getData(numeroLinea, "equipo2");
+		Equipo equipo1, equipo2;
+		if(equipos.stream().anyMatch(equipo -> equipo.getNombre().equals(nombre1)) && equipos.stream().anyMatch(equipo -> equipo.getNombre().equals(nombre2))){
+			equipo1 = equipos.stream().filter(equipo -> equipo.getNombre().equals(nombre1)).findAny().get();
+			equipo2 = equipos.stream().filter(equipo -> equipo.getNombre().equals(nombre2)).findAny().get();
+		}else{
+			throw new RuntimeException("No se encuentra el equipo");
+		}
+		return new Equipo[]{equipo1, equipo2};
 	}
 
 }
@@ -55,6 +76,10 @@ class LectorResultadosCSV extends LectorCSV {
 			listaPartidos.add(map);
 		}
 	}
+
+
+
+
 }
 
 class LectorPronosticosCSV extends LectorCSV {

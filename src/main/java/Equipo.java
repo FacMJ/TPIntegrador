@@ -1,8 +1,13 @@
+import java.util.HashSet;
+import java.util.Set;
+
 public class Equipo {
+
     private  String nombre, descripcion;
 
-    public Equipo(String nombre) {
+    public Equipo(String nombre, String descripcion) {
 		this.nombre = nombre;
+		this.descripcion=descripcion;
 	}
 
 	public String getNombre() {

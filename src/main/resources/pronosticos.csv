@@ -3,15 +3,23 @@ JavierDW;Argentina;x;;;Arabia Saudita
 JavierDW;Polonia;;x;;Mexico
 JavierDW;Polonia;;x;;Arabia Saudita
 JavierDW;Argentina;x;;;Mexico
+JavierDW;Polonia;;;x;Argentina
+JavierDW;Arabia Saudita;;;x;Mexico
 AnDres;Argentina;;;x;Arabia Saudita
 AnDres;Polonia;;;x;Mexico
 AnDres;Polonia;;x;;Arabia Saudita
 AnDres;Argentina;x;;;Mexico
+AnDres;Polonia;;x;;Argentina
+AnDres;Arabia Saudita;x;;;Mexico
 MarcoPolo;Argentina;;x;;Arabia Saudita
-MarcoPolo;Polonia;x;;;Mexico
+MarcoPolo;Polonia;;x;;Mexico
 MarcoPolo;Polonia;;;x;Arabia Saudita
-MarcoPolo;Argentina;;x;;Mexico
+MarcoPolo;Argentina;x;;;Mexico
+MarcoPolo;Polonia;;;x;Argentina
+MarcoPolo;Arabia Saudita;x;;;Mexico
 Facu20;Argentina;;x;;Arabia Saudita
 Facu20;Polonia;x;;;Mexico
 Facu20;Polonia;x;;;Arabia Saudita
 Facu20;Argentina;x;;;Mexico
+Facu20;Polonia;;;x;Argentina
+Facu20;Arabia Saudita;x;;;Mexico
