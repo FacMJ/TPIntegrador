@@ -77,15 +77,7 @@ class LectorResultadosCSV extends LectorCSV {
 		}
 	}
 
-	public boolean verificarIntegridad(int numeroPartido){
-		int goles1 = Integer.parseInt(getData(numeroPartido, "goles1"));
-		int goles2 = Integer.parseInt(getData(numeroPartido, "goles2"));
-		int ronda = Integer.parseInt(getData(numeroPartido, "ronda"));
-		String equipoUno = getData(numeroPartido, "equipo1");
-		String equipoDos = getData(numeroPartido, "equipo2");
 
-		return goles1 >= 0 && goles2 >= 0 && ronda >= 0 && !equipoUno.equals(equipoDos);
-	}
 
 
 }

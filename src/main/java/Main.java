@@ -33,6 +33,7 @@ public class Main {
 				Partido partido_i = new Partido(equipo1, equipo2, goles1, goles2);
 				partidosRonda[j] = partido_i;
 				partidos.add(partido_i);
+
 			}
 			rondas.add(new Ronda(i+1, partidosRonda));
 		}
