@@ -4,6 +4,7 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Set;
 
 /* 
  
@@ -35,7 +36,27 @@ public abstract class LectorCSV {
 	}
 
 	public String getData(int numeroPartido, String nombreColumna) {
+		if(numeroPartido<1){
+			throw new IndexOutOfBoundsException("El primer argumento debe ser mayor o igual a 1");
+		}
 		return listaPartidos.get(numeroPartido).get(nombreColumna);
+	}
+
+	public int getSize(){
+		return listaPartidos.size();
+	}
+
+	public Equipo[] getEquipos(int numeroLinea, Set<Equipo> equipos){
+		String nombre1 = getData(numeroLinea, "equipo1"),
+				nombre2 = getData(numeroLinea, "equipo2");
+		Equipo equipo1, equipo2;
+		if(equipos.stream().anyMatch(equipo -> equipo.getNombre().equals(nombre1)) && equipos.stream().anyMatch(equipo -> equipo.getNombre().equals(nombre2))){
+			equipo1 = equipos.stream().filter(equipo -> equipo.getNombre().equals(nombre1)).findAny().get();
+			equipo2 = equipos.stream().filter(equipo -> equipo.getNombre().equals(nombre2)).findAny().get();
+		}else{
+			throw new RuntimeException("No se encuentra el equipo");
+		}
+		return new Equipo[]{equipo1, equipo2};
 	}
 
 }
@@ -45,15 +66,20 @@ class LectorResultadosCSV extends LectorCSV {
 	public LectorResultadosCSV(String uri) {
 		super(uri);
 		for (String linea : lineas) {
-			String[] arrayLinea = linea.split("\t");
+			String[] arrayLinea = linea.split(";");
 			HashMap<String, String> map = new HashMap<>();
-			map.put("equipo1", arrayLinea[0]);
-			map.put("goles1", arrayLinea[1]);
-			map.put("goles2", arrayLinea[2]);
-			map.put("equipo2", arrayLinea[3]);
+			map.put("ronda", arrayLinea[0]);
+			map.put("equipo1", arrayLinea[1]);
+			map.put("goles1", arrayLinea[2]);
+			map.put("goles2", arrayLinea[3]);
+			map.put("equipo2", arrayLinea[4]);
 			listaPartidos.add(map);
 		}
 	}
+
+
+
+
 }
 
 class LectorPronosticosCSV extends LectorCSV {
@@ -61,42 +87,27 @@ class LectorPronosticosCSV extends LectorCSV {
 	public LectorPronosticosCSV(String uri) {
 		super(uri);
 		for (String linea : lineas) {
-			String[] arrayLinea = linea.split("\t");
+			String[] arrayLinea = linea.split(";");
 			HashMap<String, String> map = new HashMap<>();
-			map.put("equipo1", arrayLinea[0]);
-			map.put("gana1", arrayLinea[1]);
-			map.put("empate", arrayLinea[2]);
-			map.put("gana2", arrayLinea[3]);
-			map.put("equipo2", arrayLinea[4]);
+			map.put("persona", arrayLinea[0]);
+			map.put("equipo1", arrayLinea[1]);
+			map.put("gana1", arrayLinea[2]);
+			map.put("empate", arrayLinea[3]);
+			map.put("gana2", arrayLinea[4]);
+			map.put("equipo2", arrayLinea[5]);
 			listaPartidos.add(map);
 		}
 	
 	}
 	
 	
-	public Resultado GanaEquipoUno(int lineaLectura) {
-		LectorPronosticosCSV apuesta = new LectorPronosticosCSV("src/main/resources/pronosticos.csv");
-
-		if(apuesta.getData(lineaLectura,"gana1").equals("x")) {
+	public Resultado pronosticoEquipo1(int lineaLectura) {
+		if(getData(lineaLectura,"gana1").equals("x")) {
 			return Resultado.GANADOR;
-		}else if(apuesta.getData(lineaLectura,"empate").equals("x")) {
+		}else if(getData(lineaLectura,"empate").equals("x")) {
 			return Resultado.EMPATE;
-		}else if(apuesta.getData(lineaLectura,"gana2").equals("x")) {
+		}else if(getData(lineaLectura,"gana2").equals("x")) {
 			return Resultado.PERDEDOR;
-		}
-		return null;
-	}
-	
-	
-	public String Apuesta(int lineaLectura) {
-		LectorPronosticosCSV apuesta = new LectorPronosticosCSV("src/main/resources/pronosticos.csv");
-
-		if(apuesta.getData(lineaLectura,"gana1").equals("x")) {
-			return "gana1";
-		}else if(apuesta.getData(lineaLectura,"empate").equals("x")) {
-			return "empate";
-		}else if(apuesta.getData(lineaLectura,"gana2").equals("x")) {
-			return "gana2";
 		}
 		return null;
 	}
