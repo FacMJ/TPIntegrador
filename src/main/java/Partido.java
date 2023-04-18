@@ -5,7 +5,7 @@ public class Partido {
     private final int goles1;
     private final int goles2;
     public Partido (Equipo E1, Equipo E2, int GolesEquipo1, int GolesEquipo2){
-        if(verificarIntegridad()){
+        if(verificarIntegridad(E1, E2, GolesEquipo1, GolesEquipo2)){
             equipo1 = E1;
             equipo2 = E2;
             goles1 = GolesEquipo1;
@@ -17,8 +17,8 @@ public class Partido {
 
     }
 
-    private boolean verificarIntegridad(){
-        return goles1 >= 0 && goles2 >= 0 && !equipo1.equals(equipo2);
+    private boolean verificarIntegridad(Equipo E1, Equipo E2, int goles1, int goles2){
+        return goles1 >= 0 && goles2 >= 0 && !E1.equals(E2);
     }
 
     public Equipo getEquipoGanador() {
