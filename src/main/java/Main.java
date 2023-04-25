@@ -1,81 +1,87 @@
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
-
+import java.util.*;
+import java.sql.*;
 public class Main {
     public static void main(String[] args){
 
-		LectorResultadosCSV lectorR = new LectorResultadosCSV("src/main/resources/resultados.csv");
-		LectorPronosticosCSV lectorP = new LectorPronosticosCSV("src/main/resources/pronosticos.csv");
+        ResultSet RSPersonas, RSPronosticos, RSResultados;
 
-		Set<Equipo> equipos = new HashSet<>();
-		equipos.add(new Equipo("Argentina", "Celeste y blanco"));
-		equipos.add(new Equipo("Arabia Saudita", "Verde"));
-		equipos.add(new Equipo("Polonia", "Rojo y blanco"));
-		equipos.add(new Equipo("Mexico", "Verde, blanco y rojo"));
+        int CANTIDAD_FASES = 5;
+        int CANTIDAD_RONDAS = 3;
 
-		ArrayList<Ronda> rondas = new ArrayList<Ronda>();
-		ArrayList<Partido> partidos = new ArrayList<>();
+        System.out.println("Seleccionar puntaje por pronostico acertado --> ");
+        Scanner sc = new Scanner(System.in);
+        int k = sc.nextInt();
 
-		int cantidadRondas = Integer.parseInt(lectorR.getData(lectorR.getSize()-1, "ronda"));
-		int cantPartidosPorRonda = 2;
+        try {
+            Class.forName("com.mysql.cj.jdbc.Driver");
+            Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/control_de_apuestas","root", "root");
 
-		for(int i=0; i<cantidadRondas; i++){
-			Partido[] partidosRonda = new Partido[cantPartidosPorRonda];
-			for(int j=0; j<cantPartidosPorRonda; j++){
-				int indice = (j+1)+cantPartidosPorRonda*i;
-				Equipo equipo1 = lectorR.getEquipos(indice, equipos)[0],
-						equipo2 = lectorR.getEquipos(indice, equipos)[1];
-				int goles1 = Integer.parseInt(lectorR.getData(indice, "goles1")),
-						goles2 = Integer.parseInt(lectorR.getData(indice, "goles2"));
+            //USO LA BASE DE DATOS
 
-				Partido partido_i = new Partido(equipo1, equipo2, goles1, goles2);
-				partidosRonda[j] = partido_i;
-				partidos.add(partido_i);
+            Statement st = con.createStatement();
 
-			}
-			rondas.add(new Ronda(i+1, partidosRonda));
-		}
 
-		HashSet<Persona> personas = new HashSet<>();
 
-		for(int i=1; i<lectorP.getSize(); i++){
-			String nombre = lectorP.getData(i, "persona");
-			if(personas.stream().noneMatch(p -> p.getNombre().equals(nombre))){
-				Persona nuevaPersona = new Persona(nombre);
-				personas.add(nuevaPersona);
-			}
 
-			Resultado resultadoEsperado_i = lectorP.pronosticoEquipo1(i);
-			String n1 = lectorP.getData(i, "equipo1"),
-					n2 = lectorP.getData(i, "equipo2");
-			Equipo equipo1 = equipos.stream().filter(e -> e.getNombre().equals(n1)).findAny().get(),
-					equipo2 = equipos.stream().filter(e -> e.getNombre().equals(n2)).findAny().get();
-			Partido partido = partidos.stream().filter(p -> Arrays.equals(p.getEquipos(), new Equipo[]{equipo1, equipo2})).findAny().get();
 
-			Persona persona = personas.stream().filter(p -> p.getNombre().equals(nombre)).findAny().get();
-			persona.addPronostico(new Pronostico(partido, equipo1, resultadoEsperado_i));
 
-		}
 
-		System.out.println("Nombre ----- Pronosticos acertados ----- Puntos");
 
-		for(Persona p: personas){
-			System.out.println(p.getNombre() + " ------ " + p.pronosticosAcertados() + "/" + p.getPronosticos().size()+ " ------ " + p.puntos());
-		}
 
-		System.out.println("\n-----------------------------------\n");
 
-		for(Ronda r: rondas){
-			System.out.println("Ronda " + r.getNumero() + ":");
-			int contador=1;
-			for(Partido p: r.getPartidos()){
-				Equipo[] eqps = p.getEquipos();
-				System.out.println("\t\t Partido " + contador + " ---> " + eqps[0].getNombre() + " vs " + eqps[1].getNombre() );
-				contador++;
-			}
-		}
+
+
+
+
+
+
+            RSPersonas = st.executeQuery("SELECT * FROM apostadores");
+            while(RSPersonas.next()){
+                int id = RSPersonas.getInt(1);
+                String nombre = RSPersonas.getString(2);
+                String apellido = RSPersonas.getString(3);
+                Persona persona = new Persona(id, nombre + apellido);
+
+                PreparedStatement ps = con.prepareStatement("SELECT * FROM apuestas WHERE ApostadorID=?;");
+                ps.setString(1, String.valueOf(id));
+                RSPronosticos = ps.executeQuery();
+                while (RSPronosticos.next()){
+                    int idPartido = RSPronosticos.getInt(3);
+                    ps = con.prepareStatement("SELECT * FROM resultados WHERE PartidoID=?");
+                    ps.setString(1, String.valueOf(idPartido));
+                    RSResultados = ps.executeQuery(); //En este caso un solo partido (una sola fila)
+
+                    while(RSResultados.next()){
+                        String equipo1 = RSResultados.getString(2);
+                        String equipo2 = RSResultados.getString(3);
+                        int goles1 = RSResultados.getInt(4);
+                        int goles2 = RSResultados.getInt(5);
+                        int ronda = RSResultados.getInt(6);
+                        int fase = RSResultados.getInt(7);
+                        Partido partido = new Partido(idPartido, equipo1, equipo2, goles1, goles2, ronda, fase);
+
+                        String resultadoEsperado = RSPronosticos.getString(4);
+
+                        Pronostico pronostico = new Pronostico(partido, resultadoEsperado, k);
+                        persona.addPronostico(pronostico);
+                    }
+
+                }
+
+                ps = con.prepareStatement("UPDATE apostadores SET Puntos=? WHERE ApostadorID=?");
+                ps.setInt(1, persona.puntos());
+                ps.setInt(2, id);
+                ps.executeUpdate();
+
+
+
+            }
+
+            con.close();
+
+        } catch (SQLException | ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        }
 
     }
 }

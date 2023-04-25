@@ -1,28 +1,24 @@
 public class Pronostico {
 	private final int puntos;
+    private final int k;
     private final Partido partido;
 
-    public Pronostico(Partido partido, Equipo equipo, Resultado resultadoEsperado){
+    public Pronostico(Partido partido, String resultadoEsperado, int k){
         this.partido = partido;
-        if(resultadoEsperado.equals(getResultado(equipo))){
-            puntos=1;
+        this.k = k;
+        if(resultadoEsperado.equals(partido.getResultado())){
+            puntos=k;
         }else{
             puntos=0;
         }
     }
 
-    private Resultado getResultado(Equipo equipo){
-        Resultado res;
-        if(equipo.equals(partido.getEquipoGanador())){
-            res = Resultado.GANADOR;
-            
-        }else if(partido.getEquipoGanador()==null){
-            res = Resultado.EMPATE;
-            
-        }else{
-            res = Resultado.PERDEDOR;
-        }
-        return res;
+    public int getRonda(){
+        return partido.getRonda();
+    }
+
+    public int getFase(){
+        return partido.getFase();
     }
     
     public int puntos(){
